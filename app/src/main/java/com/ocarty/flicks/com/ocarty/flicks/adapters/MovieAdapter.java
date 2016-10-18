@@ -17,35 +17,44 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 public class MovieAdapter extends ArrayAdapter<Movie> {
+
+    private static class ViewHolder{
+        TextView tvTitle;
+        TextView tvOverview;
+        ProgressBar progressBar;
+        ImageView ivImage;
+    }
     public MovieAdapter(Context context, List<Movie> movies) {
-        super(context, android.R.layout.simple_list_item_1, movies);
+        super(context, R.layout.item_movie, movies);
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         Movie movie = getItem(position);
-
+        ViewHolder viewHolder;
         if(convertView == null) {
+            viewHolder = new ViewHolder();
             LayoutInflater inflater = LayoutInflater.from(getContext());
-           convertView = inflater.inflate(R.layout.item_movie, parent, false);
+            convertView = inflater.inflate(R.layout.item_movie, parent, false);
+            viewHolder.ivImage = (ImageView)convertView.findViewById(R.id.ivMovieImage);
+            viewHolder.tvTitle =  (TextView)convertView.findViewById(R.id.tvTitle);
+            viewHolder.tvOverview = (TextView)convertView.findViewById(R.id.tvOverview);
+            viewHolder.progressBar = (ProgressBar)convertView.findViewById(R.id.progressBar);
+            convertView.setTag(viewHolder);
         }
-
-        ImageView ivImage = (ImageView)convertView.findViewById(R.id.ivMovieImage);
-
-        ivImage.setImageResource(0);
-        TextView tvTitle = (TextView)convertView.findViewById(R.id.tvTitle);
-        TextView tvOverview = (TextView)convertView.findViewById(R.id.tvOverview);
-        final ProgressBar progressBar = (ProgressBar)convertView.findViewById(R.id.progressBar);
-
-        tvTitle.setText(movie.getOriginalTitle());
-        tvOverview.setText(movie.getOverview());
-        progressBar.setVisibility(View.VISIBLE);
+        else {
+            viewHolder = (ViewHolder)convertView.getTag();
+        }
+        viewHolder.ivImage.setImageResource(0);
+        viewHolder.tvTitle.setText(movie.getOriginalTitle());
+        viewHolder.tvOverview.setText(movie.getOverview());
+        viewHolder.progressBar.setVisibility(View.VISIBLE);
         int orientation = getContext().getResources().getConfiguration().orientation;
         if(orientation == Configuration.ORIENTATION_PORTRAIT) {
-            showPicassoView(ivImage, progressBar, movie.getPosterPath());
+            showPicassoView(viewHolder.ivImage, viewHolder.progressBar, movie.getPosterPath());
         }
         else if(orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            showPicassoView(ivImage, progressBar, movie.getBackdropPath());
+            showPicassoView(viewHolder.ivImage, viewHolder.progressBar, movie.getBackdropPath());
         }
         return convertView;
     }
