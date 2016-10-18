@@ -1,9 +1,13 @@
 package com.ocarty.flicks;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -58,6 +62,16 @@ public class MovieActivity extends AppCompatActivity {
                 // called when response HTTP status is "4XX" (eg. 401, 403, 404)
             }
         });
-
+        lvItems.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent = new Intent(MovieActivity.this, MovieDetailsActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra("originalTitle", movies.get(i).getOriginalTitle());
+                intent.putExtra("movieDetails", movies.get(i).getOverview());
+                intent.putExtra("voteOverview", movies.get(i).getVoteOverview());
+                getApplicationContext().startActivity(intent);
+            }
+        });
     }
 }
